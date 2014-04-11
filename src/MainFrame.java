@@ -12,12 +12,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -38,6 +41,7 @@ public class MainFrame extends JFrame
 	private DefaultListModel<String> newListModel = new DefaultListModel<String>();
 	private JList<String> oldList;
 	private JList<String> newList; 
+	JSpinner spinner = new JSpinner();
 	/**
 	 * Launch the application.
 	 */
@@ -73,7 +77,7 @@ public class MainFrame extends JFrame
 	 */
 	public MainFrame()
 	{
-		setTitle("Order It");
+		setTitle("Order Them");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -85,7 +89,7 @@ public class MainFrame extends JFrame
 		toolBar.setFloatable(false);
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
-		JButton btnOpenDirectory = new JButton("Open Directory");
+		JButton btnOpenDirectory = new JButton("Select Directory");
 		btnOpenDirectory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fch = new JFileChooser();
@@ -142,11 +146,18 @@ public class MainFrame extends JFrame
 		btnPutAfter.setIcon(new ImageIcon(MainFrame.class.getResource("/res/arrow_right_ico.png")));
 		toolBar.add(btnPutAfter);
 		
+		JLabel lblStartingFrom = new JLabel("Start from #:");
+		toolBar.add(lblStartingFrom);
+		
+		spinner.setSize(20, 18);
+		spinner.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
+		toolBar.add(spinner);
+		
 		JButton btnApply = new JButton("Apply");
 		btnApply.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!newOrderFiles.isEmpty()){
-				Renamer renamer = new Renamer(newOrderFiles);
+				Renamer renamer = new Renamer(newOrderFiles,(Integer)spinner.getValue());
 				renamer.rename();
 				clearLists();
 				}else{
@@ -154,6 +165,7 @@ public class MainFrame extends JFrame
 				}
 			}
 		});
+		
 		btnApply.setIcon(new ImageIcon(MainFrame.class.getResource("/res/tick.png")));
 		toolBar.add(btnApply);
 		
